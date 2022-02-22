@@ -1,5 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
+#include <stdio.h>
 
 /* generic file- or pathname buffer length */
 #define BLEN 200
