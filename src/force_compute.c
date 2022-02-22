@@ -3,7 +3,7 @@
 
 
 /* compute forces */
-static void force(mdsys_t *sys)
+void force(mdsys_t *sys)
 {
     double r,ffac;
     double rx,ry,rz;
