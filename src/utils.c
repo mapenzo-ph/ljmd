@@ -2,6 +2,7 @@
 #include <sys/time.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 /* helper function: get current time in seconds since epoch */
 double wallclock()
@@ -37,7 +38,6 @@ int get_a_line(FILE *fp, char *buf)
     /* read a line and cut of comments and blanks */
     if (fgets(tmp,BLEN,fp)) {
         int i;
-
         ptr=strchr(tmp,'#');
         if (ptr) *ptr= '\0';
         i=strlen(tmp); --i;
