@@ -14,19 +14,6 @@
 #include "utils.h"
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* main */
 int main(int argc, char **argv)
 {
@@ -62,6 +49,8 @@ int main(int argc, char **argv)
     sys.dt=atof(line);
     if(get_a_line(stdin,line)) return 1;
     nprint=atoi(line);
+
+    // exit(0);
 
     /* allocate memory */
     sys.rx=(double *)malloc(sys.natoms*sizeof(double));
