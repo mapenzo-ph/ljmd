@@ -1,19 +1,24 @@
 This package contains simplified MD code with multi-threading
 parallelization for simulating atoms with a Lennard-Jones potential.
 
-The bundled makefiles are set up to compile the executable once
-with OpenMP disabled and once with OpenMP enabled with each build
-placing the various object files in separate directories.
 
 The examples directory contains 3 sets of example input decks
 and the reference directory the corresponding outputs.
 
-Type: make
-to compile everything and: make clean
-to remove all compiled objects
 
 To build using CMake type:
 - mkdir build && cd build -> to create build folder
 - cmake .. 		  -> to generate build files
 - cmake --build .	  -> to build in the folder
 
+To build with testing enabled :
+- mkdir build && cd build
+- cmake -DENABLE_TESTING ..
+- cmake --build .
+- make test
+
+The individual parts of this project is done by the following members of the team:
+
+Optimisation of force computation: Zainab: zainabnazari
+MPI parallelization: Giulio: giumal
+OpenMP parallelization: Alessandro: mapenzo-ph
