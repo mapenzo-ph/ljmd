@@ -19,6 +19,6 @@ To build with testing enabled :
 
 The individual parts of this project is done by the following members of the team:
 
-Optimisation of force computation: Zainab: zainabnazari
-MPI parallelization: Giulio: giumal
-OpenMP parallelization: Alessandro: mapenzo-ph
+- Optimisation of force computation: Zainab: zainabnazari
+- MPI parallelization: Giulio: giumal
+- OpenMP parallelization: Alessandro: mapenzo-ph
