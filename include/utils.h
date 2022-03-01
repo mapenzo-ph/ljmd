@@ -2,6 +2,10 @@
 #define UTILS_H
 #include <stdio.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 /* generic file- or pathname buffer length */
 #define BLEN 200
 
@@ -24,7 +28,8 @@ typedef struct _mdsys mdsys_t;
 // force_compute.c
 void force(mdsys_t *);
 // verlet.c
-void velverlet(mdsys_t *);
+void verlet1(mdsys_t *);
+void verlet2(mdsys_t *);
 // kinetic.c
 void ekin(mdsys_t *);
 // utils.c

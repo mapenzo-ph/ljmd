@@ -106,7 +106,9 @@ int main(int argc, char **argv)
             output(&sys, erg, traj);
 
         /* propagate system and recompute energies */
-        velverlet(&sys);
+        verlet1(&sys);
+        force(&sys);
+        verlet2(&sys);
         ekin(&sys);
     }
     /**************************************************/
