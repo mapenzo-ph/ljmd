@@ -7,6 +7,7 @@ void force(mdsys_t *sys)
     double r,ffac;
     double rx,ry,rz;
     double epot = 0.0;
+    int i,j;
 
     /* zero energy and forces */
     azzero(sys->fx,sys->natoms);
@@ -14,13 +15,10 @@ void force(mdsys_t *sys)
     azzero(sys->fz,sys->natoms);
 
     #ifdef _OPENMP
-    #pragma omp parallel for private(rx, ry, rz, r, ffac) reduction(+:epot)
+    #pragma omp parallel for default(shared) private(i,j,rx,ry,rz,r,ffac) reduction(+:epot)
     #endif
-    for(int i=0; i < (sys->natoms); ++i) {
-        for(int j=0; j < (sys->natoms); ++j) {
-
-            /* particles have no interactions with themselves */
-            if (i==j) continue;
+    for(i=0; i < (sys->natoms)-1; ++i) {
+        for(j=i+1; j < (sys->natoms); ++j) {
 
             /* get distance between particle i and j */
             rx=pbc(sys->rx[i] - sys->rx[j], 0.5*sys->box);
@@ -32,13 +30,33 @@ void force(mdsys_t *sys)
             if (r < sys->rcut) {
                 ffac = -4.0*sys->epsilon*(-12.0*pow(sys->sigma/r,12.0)/r
                                          +6*pow(sys->sigma/r,6.0)/r);
+                
 
-                epot += 0.5*4.0*sys->epsilon*(pow(sys->sigma/r,12.0)
+                epot += 4.0*sys->epsilon*(pow(sys->sigma/r,12.0)
                                                -pow(sys->sigma/r,6.0));
 
-                sys->fx[i] += rx/r*ffac;
-                sys->fy[i] += ry/r*ffac;
-                sys->fz[i] += rz/r*ffac;
+            
+                #ifdef _OPENMP
+                #pragma omp atomic
+                sys->fx[i] += rx / r * ffac;
+                #pragma omp atomic
+                sys->fy[i] += ry / r * ffac;
+                #pragma omp atomic
+                sys->fz[i] += rz / r * ffac;
+                #pragma omp atomic
+                sys->fx[j] -= rx / r * ffac;
+                #pragma omp atomic
+                sys->fy[j] -= ry / r * ffac;
+                #pragma omp atomic
+                sys->fz[j] -= rz / r * ffac;
+                #else
+                sys->fx[i] += rx / r * ffac;
+                sys->fy[i] += ry / r * ffac;
+                sys->fz[i] += rz / r * ffac;
+                sys->fx[j] -= rx / r * ffac;
+                sys->fy[j] -= ry / r * ffac;
+                sys->fz[j] -= rz / r * ffac;
+                #endif
             }
         }
     }

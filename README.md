@@ -13,9 +13,11 @@ To build using CMake type:
 
 To build with testing enabled :
 - mkdir build && cd build
-- cmake -DENABLE_TESTING ..
+- cmake -DENABLE_TESTING .. for macos:  cmake -DENABLE_TESTING=1 -DCMAKE_CXX_FLAGS="-std=c++11" ..
 - cmake --build .
 - make test
+
+
 
 The individual parts of this project is done by the following members of the team:
 
