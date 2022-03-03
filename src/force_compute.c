@@ -6,15 +6,13 @@ void force(mdsys_t *sys)
 {
     double ffac;
     double rx,ry,rz;
-    double epot ;
+    double epot=0.0 ;
     int i,j;
 // this change of paprameters done for avoiding expensive math like power, sqrt, division.
      double sigma1=sys->sigma;
      double sigma6=(sigma1)*(sigma1)*(sigma1)*(sigma1)*(sigma1)*(sigma1);
      double sigma12=sigma6*sigma6;
-    double rsq,rinv,r6;
-    rinv=1.0/rsq;
-    r6=rinv*rinv*rinv;
+     double rsq,rinv,r6;
      double c12 = 4.0 * sys->epsilon * sigma6 * sigma6 ;
      double c6  = 4.0 * sys->epsilon * sigma6 ;
      double rcsq = sys->rcut * sys->rcut;
@@ -25,7 +23,7 @@ void force(mdsys_t *sys)
     azzero(sys->fz,sys->natoms);
 
     #ifdef _OPENMP
-    #pragma omp parallel for default(shared) private(i,j,rx,ry,rz,r,ffac) reduction(+:epot)
+    #pragma omp parallel for default(shared) private(i,j,rx,ry,rz,r6,ffac,rinv,rsq) reduction(+:epot)
     #endif
     for(i=0; i < (sys->natoms)-1; ++i) {
         for(j=i+1; j < (sys->natoms); ++j) {
@@ -39,9 +37,11 @@ void force(mdsys_t *sys)
 
             /* compute force and energy if within cutoff */
             if (rsq < rcsq) {
+              rinv=1.0/rsq;
+              r6=rinv*rinv*rinv;
                 ffac = (12.0*c12*r6 - 6.0*c6)*r6*rinv;
 
-                sys->epot += r6*(c12*r6-c6);
+                epot += r6*(c12*r6-c6);
 
 
                 #ifdef _OPENMP
