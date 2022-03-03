@@ -14,6 +14,7 @@ target_compile_definitions(ljmd PRIVATE -DLJMD_VERSION=${CMAKE_PROJECT_VERSION})
 set_target_properties(ljmd PROPERTIES OUTPUT_NAME ljmd.x)
 
 add_library(ljmd_lib src/force_compute.c src/kinetic.c src/output.c src/utils.c src/verlet.c)
+
 target_include_directories(ljmd_lib PRIVATE include)
 
 # add general compilation options
@@ -23,6 +24,16 @@ add_compile_options(-Wall -g -O3 -ffast-math -fomit-frame-pointer)
 if(USE_OMP)
     find_package(OpenMP REQUIRED)
     target_link_libraries(ljmd_lib PRIVATE OpenMP::OpenMP_C)
+endif()
+
+#add MPI support
+if(USE_MPI)
+    find_package(MPI REQUIRED)
+    include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+    target_link_libraries(ljmd PRIVATE ${MPI_C_LIBRARIES} )
+    target_link_libraries(ljmd_lib PRIVATE ${MPI_C_LIBRARIES} )
+    target_compile_definitions(ljmd PRIVATE -DUSE_MPI)
+    target_compile_definitions(ljmd_lib PRIVATE -DUSE_MPI)
 endif()
 
 # add link libraries for all executables

@@ -17,6 +17,7 @@ void ekin(mdsys_t *sys,particles_t *part)
     sys->temp = 2.0*sys->ekin/(3.0*sys->natoms-3.0)/kboltz;
 }
 #else
+extern int myq;
 void ekin(mdsys_t *sys, particles_t *part)
 {
     int i;

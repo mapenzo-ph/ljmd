@@ -15,6 +15,8 @@ void output(mdsys_t *sys,particles_t *part, FILE *erg, FILE *traj)
     }
 }
 #else
+extern int rank, size, myq;
+extern MPI_Datatype MPI_PAR;
 /* append data to output. 
         ACTUALLY THIS PART AS THE INPUT PART SHOULD BE DONE WITH MPI-IO OR HDF5 /!\ 
         WE DIDN'T HAVE THE TIME TO CHANGE THEM YET BUT THIS CAN BE DONE IN THE FUTURE!

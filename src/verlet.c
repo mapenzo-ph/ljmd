@@ -35,6 +35,8 @@ void verlet2(mdsys_t *sys,particles_t *part)
     }
 }
 #else
+extern int myq;
+
 void verlet1(mdsys_t *sys, particles_t *part)
 {
     int i;
@@ -53,7 +55,7 @@ void verlet1(mdsys_t *sys, particles_t *part)
 }
 
 void verlet2(mdsys_t *sys, particles_t *part){
-
+    int i;
     /* second part: propagate velocities by another half step */
     for (i=0; i<myq; ++i) {
         part[i].vx += 0.5*sys->dt / mvsq2e * part[i].fx / sys->mass;

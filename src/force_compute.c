@@ -72,6 +72,9 @@ void force(mdsys_t *sys, particles_t *part)
     sys->epot = epot;
 }
 #else
+
+extern int rank, size, myq;
+extern MPI_Datatype MPI_PAR;
 /* compute forces */
 void force(mdsys_t *sys, particles_t *part)
 {
@@ -91,6 +94,7 @@ void force(mdsys_t *sys, particles_t *part)
     particles_t *cbuf=calloc(sizeof(particles_t),n_to_alloc);
 
     int myq2;
+    if(size>1)
     myq2=message(part,buf,myq);
     for(int l=0; l<size; ++l){
        for(i=0; i<n_to_alloc; ++i){ //nt_to_alloc and not myq because, otherwise some processors could not enter and a deadlock happens.
@@ -119,8 +123,11 @@ void force(mdsys_t *sys, particles_t *part)
             }
         }
         memcpy(cbuf,buf,sizeof(particles_t)*n_to_alloc);
+        if(size>1)
         myq2=message(cbuf,buf,myq2);
     }
+
+    MPI_Allreduce(MPI_IN_PLACE,&sys->epot,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
 
     // TO DEBUG
     // for(int i=0; i<myq; ++i){
@@ -129,6 +136,8 @@ void force(mdsys_t *sys, particles_t *part)
     // MPI_Barrier(MPI_COMM_WORLD);
     // printf("All done rank %d !\n",rank);
     // MPI_Abort(MPI_COMM_WORLD,0);
+    free(buf);
+    free(cbuf);
 
 }
 

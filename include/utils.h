@@ -3,6 +3,8 @@
 #include <stdio.h>
 #ifdef USE_MPI
 #include "mpi.h"
+#include "string.h"
+#include "stdlib.h"
 #endif
 
 #ifdef _OPENMP
@@ -65,10 +67,7 @@ void azzero(particles_t *, const int );
 #ifndef USE_MPI
 void output(mdsys_t *,particles_t *, FILE *, FILE *);
 #else
-// global variable
-int rank, size;
-int myq;
-MPI_Datatype MPI_PAR;
+
 void output(mdsys_t *,particles_t *, FILE *, FILE *, int *, int *);
 // message
 int message(particles_t *,particles_t *, int );
