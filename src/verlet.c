@@ -1,6 +1,8 @@
 #include "utils.h"
+
+#ifndef USE_MPI
 /* velocity verlet */
-void verlet1(mdsys_t *sys)
+void verlet1(mdsys_t *sys,particles_t *part)
 {
     /* first part: propagate velocities by half and positions by full step */
 
@@ -9,16 +11,16 @@ void verlet1(mdsys_t *sys)
     #pragma omp parallel for
     #endif
     for (int i=0; i<sys->natoms; ++i) {
-        sys->vx[i] += 0.5*sys->dt / mvsq2e * sys->fx[i] / sys->mass;
-        sys->vy[i] += 0.5*sys->dt / mvsq2e * sys->fy[i] / sys->mass;
-        sys->vz[i] += 0.5*sys->dt / mvsq2e * sys->fz[i] / sys->mass;
-        sys->rx[i] += sys->dt*sys->vx[i];
-        sys->ry[i] += sys->dt*sys->vy[i];
-        sys->rz[i] += sys->dt*sys->vz[i];
+        part[i].vx += 0.5*sys->dt / mvsq2e * part[i].fx / sys->mass;
+        part[i].vy += 0.5*sys->dt / mvsq2e * part[i].fy / sys->mass;
+        part[i].vz += 0.5*sys->dt / mvsq2e * part[i].fz / sys->mass;
+        part[i].rx += sys->dt*part[i].vx;
+        part[i].ry += sys->dt*part[i].vy;
+        part[i].rz += sys->dt*part[i].vz;
     }
 }
 
-void verlet2(mdsys_t *sys)
+void verlet2(mdsys_t *sys,particles_t *part)
 {
     /* second part: propagate velocities by another half step */
 
@@ -27,8 +29,37 @@ void verlet2(mdsys_t *sys)
     #pragma omp parallel for
     #endif
     for (int i=0; i<sys->natoms; ++i) {
-        sys->vx[i] += 0.5*sys->dt / mvsq2e * sys->fx[i] / sys->mass;
-        sys->vy[i] += 0.5*sys->dt / mvsq2e * sys->fy[i] / sys->mass;
-        sys->vz[i] += 0.5*sys->dt / mvsq2e * sys->fz[i] / sys->mass;
+        part[i].vx += 0.5*sys->dt / mvsq2e * part[i].fx / sys->mass;
+        part[i].vy += 0.5*sys->dt / mvsq2e * part[i].fy / sys->mass;
+        part[i].vz += 0.5*sys->dt / mvsq2e * part[i].fz / sys->mass;
     }
 }
+#else
+void verlet1(mdsys_t *sys, particles_t *part)
+{
+    int i;
+
+    /* first part: propagate velocities by half and positions by full step */
+    for (i=0; i<myq; ++i) {
+        // Update velocities
+        part[i].vx += 0.5*sys->dt / mvsq2e * part[i].fx / sys->mass;
+        part[i].vy += 0.5*sys->dt / mvsq2e * part[i].fy / sys->mass;
+        part[i].vz += 0.5*sys->dt / mvsq2e * part[i].fz / sys->mass;
+        // Update positions
+        part[i].rx += sys->dt*part[i].vx;
+        part[i].ry += sys->dt*part[i].vy;
+        part[i].rz += sys->dt*part[i].vz;
+    }
+}
+
+void verlet2(mdsys_t *sys, particles_t *part){
+
+    /* second part: propagate velocities by another half step */
+    for (i=0; i<myq; ++i) {
+        part[i].vx += 0.5*sys->dt / mvsq2e * part[i].fx / sys->mass;
+        part[i].vy += 0.5*sys->dt / mvsq2e * part[i].fy / sys->mass;
+        part[i].vz += 0.5*sys->dt / mvsq2e * part[i].fz / sys->mass;
+    }
+}
+
+#endif
