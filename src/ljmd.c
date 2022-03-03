@@ -53,29 +53,30 @@ int main(int argc, char **argv)
     // exit(0);
 
     /* allocate memory */
-    sys.rx=(double *)malloc(sys.natoms*sizeof(double));
-    sys.ry=(double *)malloc(sys.natoms*sizeof(double));
-    sys.rz=(double *)malloc(sys.natoms*sizeof(double));
-    sys.vx=(double *)malloc(sys.natoms*sizeof(double));
-    sys.vy=(double *)malloc(sys.natoms*sizeof(double));
-    sys.vz=(double *)malloc(sys.natoms*sizeof(double));
-    sys.fx=(double *)malloc(sys.natoms*sizeof(double));
-    sys.fy=(double *)malloc(sys.natoms*sizeof(double));
-    sys.fz=(double *)malloc(sys.natoms*sizeof(double));
+
+    particles_t *part=calloc(sizeof(particles_t),sys.natoms);
+
+    // sys.rx=(double *)malloc(sys.natoms*sizeof(double));
+    // sys.ry=(double *)malloc(sys.natoms*sizeof(double));
+    // sys.rz=(double *)malloc(sys.natoms*sizeof(double));
+    // sys.vx=(double *)malloc(sys.natoms*sizeof(double));
+    // sys.vy=(double *)malloc(sys.natoms*sizeof(double));
+    // sys.vz=(double *)malloc(sys.natoms*sizeof(double));
+    // sys.fx=(double *)malloc(sys.natoms*sizeof(double));
+    // sys.fy=(double *)malloc(sys.natoms*sizeof(double));
+    // sys.fz=(double *)malloc(sys.natoms*sizeof(double));
 
     /* read restart */
     fp=fopen(restfile,"r");
     if(fp) {
         for (i=0; i<sys.natoms; ++i) {
-            fscanf(fp,"%lf%lf%lf",sys.rx+i, sys.ry+i, sys.rz+i);
+            fscanf(fp,"%lf%lf%lf",&part[i].rx, &part[i].ry, &part[i].rz);
         }
         for (i=0; i<sys.natoms; ++i) {
-            fscanf(fp,"%lf%lf%lf",sys.vx+i, sys.vy+i, sys.vz+i);
+            fscanf(fp,"%lf%lf%lf",&part[i].vx, &part[i].vy, &part[i].vz);
         }
         fclose(fp);
-        azzero(sys.fx, sys.natoms);
-        azzero(sys.fy, sys.natoms);
-        azzero(sys.fz, sys.natoms);
+        azzero(part, sys.natoms);
     } else {
         perror("cannot read restart file");
         return 3;
@@ -83,8 +84,8 @@ int main(int argc, char **argv)
 
     /* initialize forces and energies.*/
     sys.nfi=0;
-    force(&sys);
-    ekin(&sys);
+    force(&sys,part);
+    ekin(&sys,part);
 
     erg=fopen(ergfile,"w");
     traj=fopen(trajfile,"w");
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
     printf("Startup time: %10.3fs\n", wallclock()-t_start);
     printf("Starting simulation with %d atoms for %d steps.\n",sys.natoms, sys.nsteps);
     printf("     NFI            TEMP            EKIN                 EPOT              ETOT\n");
-    output(&sys, erg, traj);
+    output(&sys,part, erg, traj);
 
     /* reset timer */
     t_start = wallclock();
@@ -103,13 +104,14 @@ int main(int argc, char **argv)
 
         /* write output, if requested */
         if ((sys.nfi % nprint) == 0)
-            output(&sys, erg, traj);
+            output(&sys,part, erg, traj);
 
         /* propagate system and recompute energies */
-        verlet1(&sys);
-        force(&sys);
-        verlet2(&sys);
-        ekin(&sys);
+        verlet1(&sys,part);
+        force(&sys,part);
+
+        verlet2(&sys,part);
+        ekin(&sys,part);
     }
     /**************************************************/
 
@@ -118,15 +120,7 @@ int main(int argc, char **argv)
     fclose(erg);
     fclose(traj);
 
-    free(sys.rx);
-    free(sys.ry);
-    free(sys.rz);
-    free(sys.vx);
-    free(sys.vy);
-    free(sys.vz);
-    free(sys.fx);
-    free(sys.fy);
-    free(sys.fz);
+    free(part);
 
     return 0;
 }
