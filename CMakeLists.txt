@@ -76,7 +76,7 @@ if(ENABLE_TESTING)
     add_test(NAME Verlet COMMAND test_verlet)
 
     # test if application runs
-    file(WRITE ${CMAKE_BINARY_DIR}/test_write.sh "cp -r ../test . && cd test && ../ljmd.x < simple_test.inp ") 
+    file(WRITE ${CMAKE_BINARY_DIR}/test_write.sh "cp -r ../test . && cd test && ../ljmd.x  simple_test.inp ") 
     add_test(NAME Runs COMMAND bash test_write.sh)
 
 endif()

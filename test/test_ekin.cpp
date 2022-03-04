@@ -8,7 +8,7 @@ class EKinTest : public ::testing::Test
 
 protected:
     mdsys_t *sys;
-    particles_t *part;
+    vel_t *vel;
 
     void SetUp()
     {
@@ -16,17 +16,17 @@ protected:
         sys->natoms = 3;
         sys->mass = 1.0;
 
-        part = new particles_t[3]();
+        vel = new vel_t[3]();
 
         // take velocities along axes for simplicity
-        part[0].vx = 1.0;
-        part[1].vy = 3.0;
-        part[2].vz = -2.0;
+        vel[0].vx = 1.0;
+        vel[1].vy = 3.0;
+        vel[2].vz = -2.0;
     }
 
     void TearDown()
     {
-        delete[] part;
+        delete[] vel;
 
         delete sys;
     }
@@ -34,17 +34,17 @@ protected:
 
 TEST_F(EKinTest, basic_test)
 {
-    ASSERT_DOUBLE_EQ(part[0].vx, 1.0);
-    ASSERT_DOUBLE_EQ(part[1].vx, 0.0);
-    ASSERT_DOUBLE_EQ(part[2].vx, 0.0);
-    ASSERT_DOUBLE_EQ(part[0].vy, 0.0);
-    ASSERT_DOUBLE_EQ(part[1].vy, 3.0);
-    ASSERT_DOUBLE_EQ(part[2].vy, 0.0);
-    ASSERT_DOUBLE_EQ(part[0].vz, 0.0);
-    ASSERT_DOUBLE_EQ(part[1].vz, 0.0);
-    ASSERT_DOUBLE_EQ(part[2].vz, -2.0);
+    ASSERT_DOUBLE_EQ(vel[0].vx, 1.0);
+    ASSERT_DOUBLE_EQ(vel[1].vx, 0.0);
+    ASSERT_DOUBLE_EQ(vel[2].vx, 0.0);
+    ASSERT_DOUBLE_EQ(vel[0].vy, 0.0);
+    ASSERT_DOUBLE_EQ(vel[1].vy, 3.0);
+    ASSERT_DOUBLE_EQ(vel[2].vy, 0.0);
+    ASSERT_DOUBLE_EQ(vel[0].vz, 0.0);
+    ASSERT_DOUBLE_EQ(vel[1].vz, 0.0);
+    ASSERT_DOUBLE_EQ(vel[2].vz, -2.0);
 
-    ekin(sys,part);
+    ekin(sys,vel);
 
     double exp_ekin = 7.0*mvsq2e;
     EXPECT_DOUBLE_EQ(sys->ekin, exp_ekin);
