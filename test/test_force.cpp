@@ -3,30 +3,26 @@ extern "C" {
 #include "utils.h"
 }
 
+
 class ForceTest: public ::testing::Test 
 {
 
-protected:
+public:
     mdsys_t *sys;
     coords_t *coord;
     for_t *forces;
-    #ifdef USE_MPI
-    for_t *forces2;
-    #endif
-
 
     void SetUp()
     {
+
         sys = new mdsys_t;
+
         sys->natoms = 2;
         sys->epsilon = 3.0;
         sys->sigma = 1.0;
 
         coord = new coords_t[2]();
         forces = new for_t[2]();
-        #ifdef USE_MPI
-        forces2 = new for_t[2]();
-        #endif
         
         // initialize positions
         // take two atoms with dist 2.0 along x
@@ -39,10 +35,6 @@ protected:
     {
         delete[] coord;
         delete[] forces;
-        #ifdef USE_MPI
-        delete[] forces2;
-        #endif
-
         delete sys;
 
     }
@@ -60,21 +52,8 @@ TEST_F(ForceTest, inside_rcut_direct)
 
     sys->box = 10.0;
     sys->rcut = 3.0;
-    #ifdef USE_MPI
-    MPI_Init(NULL,NULL);
-    if(sys.size!=1){
-        printf("this test was build to run only 1 mpi process\n");
-        MPI_Abort(MPI_COMM_WORLD);
-    }
-    MPI_Datatype MPI_COORD=coordinates_mpitype();
-    MPI_Datatype MPI_VEL=velocities_mpitype();
-    MPI_Datatype MPI_FORCE=coordinates_mpitype();
-    MPI_Op MPI_SUM_F=mpi_operation();
-    force(&sys,coord,forces,forces2,MPI_FORCE,MPI_COORD,MPI_SUM_F);
-    MPI_Finalize();
-    #else
+
     force(sys,coord,forces);
-    #endif
 
     double exp_f = -sys->epsilon * 93.0 / 512.0;
     EXPECT_DOUBLE_EQ(forces[0].fx, -exp_f);
@@ -100,21 +79,8 @@ TEST_F(ForceTest, inside_rcut_pbc)
 
     sys->box = 3.0;
     sys->rcut = 1.5;
-    #ifdef USE_MPI
-    MPI_Init(NULL,NULL);
-    if(sys.size!=1){
-        printf("this test was build to run only 1 mpi process\n");
-        MPI_Abort(MPI_COMM_WORLD);
-    }
-    MPI_Datatype MPI_COORD=coordinates_mpitype();
-    MPI_Datatype MPI_VEL=velocities_mpitype();
-    MPI_Datatype MPI_FORCE=coordinates_mpitype();
-    MPI_Op MPI_SUM_F=mpi_operation();
-    force(&sys,coord,forces,forces2,MPI_FORCE,MPI_COORD,MPI_SUM_F);
-    MPI_Finalize();
-    #else
+
     force(sys,coord,forces);
-    #endif
 
     double exp_f = 24.0 * sys->epsilon;
     EXPECT_DOUBLE_EQ(forces[0].fx, exp_f);
@@ -139,21 +105,8 @@ TEST_F(ForceTest, outside_rcut_direct)
 
     sys->box = 10.0;
     sys->rcut = 1.0;
-    #ifdef USE_MPI
-    MPI_Init(NULL,NULL);
-    if(sys.size!=1){
-        printf("this test was build to run only 1 mpi process\n");
-        MPI_Abort(MPI_COMM_WORLD);
-    }
-    MPI_Datatype MPI_COORD=coordinates_mpitype();
-    MPI_Datatype MPI_VEL=velocities_mpitype();
-    MPI_Datatype MPI_FORCE=coordinates_mpitype();
-    MPI_Op MPI_SUM_F=mpi_operation();
-    force(&sys,coord,forces,forces2,MPI_FORCE,MPI_COORD,MPI_SUM_F);
-    MPI_Finalize();
-    #else
+
     force(sys,coord,forces);
-    #endif
 
     EXPECT_DOUBLE_EQ(forces[0].fx, 0.0);
     EXPECT_DOUBLE_EQ(forces[1].fx, 0.0);
@@ -164,5 +117,7 @@ TEST_F(ForceTest, outside_rcut_direct)
     
     EXPECT_DOUBLE_EQ(sys->epot, 0.0);
 }
+
+
 
 

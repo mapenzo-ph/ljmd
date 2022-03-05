@@ -36,6 +36,16 @@ if(USE_MPI)
     target_compile_definitions(ljmd_lib PRIVATE -DUSE_MPI)
 endif()
 
+if(USE_HYBRID)
+    find_package(MPI REQUIRED)
+    find_package(OpenMP REQUIRED)
+    include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+    target_link_libraries(ljmd PRIVATE ${MPI_C_LIBRARIES} )
+    target_link_libraries(ljmd_lib PRIVATE ${MPI_C_LIBRARIES}  OpenMP::OpenMP_C)
+    target_compile_definitions(ljmd PRIVATE -DUSE_MPI -DUSE_OMP)
+    target_compile_definitions(ljmd_lib PRIVATE -DUSE_MPI -DUSE_OMP)
+endif()
+
 # add link libraries for all executables
 target_link_libraries(ljmd PRIVATE ljmd_lib)
 target_link_libraries(ljmd_lib PRIVATE m)
