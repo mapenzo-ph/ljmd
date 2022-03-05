@@ -12,7 +12,7 @@ void force(mdsys_t *sys,coords_t * coord, for_t* forces)
 // this change of paprameters done for avoiding expensive math like power, sqrt, division.
      double sigma1=sys->sigma;
      double sigma6=(sigma1)*(sigma1)*(sigma1)*(sigma1)*(sigma1)*(sigma1);
-     double sigma12=sigma6*sigma6;
+    //  double sigma12=sigma6*sigma6;
      double rsq,rinv,r6;
      double c12 = 4.0 * sys->epsilon * sigma6 * sigma6 ;
      double c6  = 4.0 * sys->epsilon * sigma6 ;
@@ -76,7 +76,7 @@ void force(mdsys_t *sys,coords_t * coord, for_t* forces)
 /* compute forces */
 void force(mdsys_t *sys, coords_t * coord, for_t* forces, for_t* forces2, MPI_Datatype MPI_FORCE,MPI_Datatype MPI_COORD, MPI_Op SUM_F)
 {
-    double r=0.0,ffac=0.0;
+    double ffac=0.0;
     double rx=0.0,ry=0.0,rz=0.0;
     int i,j,ii;
 
@@ -88,7 +88,7 @@ void force(mdsys_t *sys, coords_t * coord, for_t* forces, for_t* forces2, MPI_Da
 
     double sigma1=sys->sigma;
     double sigma6=(sigma1)*(sigma1)*(sigma1)*(sigma1)*(sigma1)*(sigma1);
-    double sigma12=sigma6*sigma6;
+    // double sigma12=sigma6*sigma6;
     double rsq=0.0,rinv=0.0,r6=0.0;
     double c12 = 4.0 * sys->epsilon * sigma6 * sigma6 ;
     double c6  = 4.0 * sys->epsilon * sigma6 ;
