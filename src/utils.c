@@ -77,24 +77,25 @@ MPI_Datatype coordinates_mpitype(){
     return COORD_TYPE;
 }
 
-MPI_Datatype velocities_mpitype(){
-    MPI_Datatype VEL_TYPE;
-    MPI_Aint disp[3];
-    MPI_Aint base_addr;
-    int length[3]={1,1,1};
-    vel_t tmp;
-    MPI_Get_address(&tmp,&base_addr);
-    MPI_Get_address(&tmp.vx,&disp[0]);
-    MPI_Get_address(&tmp.vy,&disp[1]);
-    MPI_Get_address(&tmp.vz,&disp[2]);
-    disp[0] = MPI_Aint_diff(disp[0], base_addr);
-    disp[1] = MPI_Aint_diff(disp[1], base_addr);
-    disp[2] = MPI_Aint_diff(disp[2], base_addr);
-    MPI_Datatype type[3]={MPI_DOUBLE,MPI_DOUBLE,MPI_DOUBLE};
-    MPI_Type_create_struct(3, length, disp, type, &VEL_TYPE);
-    MPI_Type_commit(&VEL_TYPE);
-    return VEL_TYPE;
-}
+// Not use in the code
+// MPI_Datatype velocities_mpitype(){
+//     MPI_Datatype VEL_TYPE;
+//     MPI_Aint disp[3];
+//     MPI_Aint base_addr;
+//     int length[3]={1,1,1};
+//     vel_t tmp;
+//     MPI_Get_address(&tmp,&base_addr);
+//     MPI_Get_address(&tmp.vx,&disp[0]);
+//     MPI_Get_address(&tmp.vy,&disp[1]);
+//     MPI_Get_address(&tmp.vz,&disp[2]);
+//     disp[0] = MPI_Aint_diff(disp[0], base_addr);
+//     disp[1] = MPI_Aint_diff(disp[1], base_addr);
+//     disp[2] = MPI_Aint_diff(disp[2], base_addr);
+//     MPI_Datatype type[3]={MPI_DOUBLE,MPI_DOUBLE,MPI_DOUBLE};
+//     MPI_Type_create_struct(3, length, disp, type, &VEL_TYPE);
+//     MPI_Type_commit(&VEL_TYPE);
+//     return VEL_TYPE;
+// }
 
 MPI_Datatype forces_mpitype(){
     MPI_Datatype FORCE_TYPE;

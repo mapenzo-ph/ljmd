@@ -78,21 +78,12 @@ typedef struct _velocities vel_t;
 typedef struct _forces for_t;
 
 
-// // force_compute.c
-// void force(mdsys_t *, particles_t *);
-// // verlet.c
-// void verlet1(mdsys_t *);
-// void verlet2(mdsys_t *);
-// // kinetic.c
-// void ekin(mdsys_t *);
-// // utils.c
+
 double wallclock();
-// void azzero(double *, const int );
 double pbc(double , const double );
 int get_a_line(FILE *, char *);
-// output.c
-// MPI
-// changed functions
+
+// MPI functions
 #ifdef USE_MPI
 // mpi_utils
 MPI_Datatype mdsys_mpitype();
@@ -103,7 +94,7 @@ MPI_Op mpi_operation();
 void sum_struct_force(void*, void* , int *, MPI_Datatype *);
 #endif
 
-// changed functions
+// other functions
 void ekin(mdsys_t *, vel_t *);
 void verlet1(mdsys_t *, coords_t *, vel_t *, for_t*);
 void verlet2(mdsys_t *, vel_t *, for_t*);
@@ -115,10 +106,6 @@ void force(mdsys_t *, coords_t *, for_t*);
 void azzero(for_t *, const int );
 void output(mdsys_t *,coords_t *, FILE *, FILE *);
 
-// void ekin(mdsys_t *, particles_t *);
-// void verlet1(mdsys_t *, particles_t *);
-// void verlet2(mdsys_t *, particles_t *);
-// void force(mdsys_t *, particles_t *);
-// void azzero(particles_t *, const int );
+
 
 #endif

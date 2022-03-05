@@ -32,7 +32,8 @@ int main(int argc, char **argv)
     // --------------------------------------------------------------------------
     // Creation common datatype
     MPI_Datatype MPI_COORD=coordinates_mpitype();
-    MPI_Datatype MPI_VEL=velocities_mpitype();
+    // MPI_VEL: Not use in this parallelization strategy but maybe useful for another strategy
+    // MPI_Datatype MPI_VEL=velocities_mpitype();  
     MPI_Datatype MPI_FORCE=coordinates_mpitype();
     MPI_Op MPI_SUM_F=mpi_operation();
     // --------------------------------------------------------------------------

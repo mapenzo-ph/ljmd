@@ -4,12 +4,13 @@
 void ekin(mdsys_t *sys,vel_t *vel)
 {
     double ekin = 0.0;
+    double tmp= 0.5*mvsq2e*sys->mass;
     // parallelization of outer loop
     #ifdef _OPENMP
     #pragma omp parallel for reduction(+:ekin)
     #endif
     for (int i=0; i<sys->natoms; ++i) {
-        ekin += 0.5*mvsq2e*sys->mass*(vel[i].vx*vel[i].vx + vel[i].vy*vel[i].vy + vel[i].vz*vel[i].vz);
+        ekin += tmp*(vel[i].vx*vel[i].vx + vel[i].vy*vel[i].vy + vel[i].vz*vel[i].vz);
     }
 
     sys->ekin = ekin;
